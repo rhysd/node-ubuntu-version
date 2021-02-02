@@ -46,6 +46,8 @@ Instead, we need to get OS information from `lsb_release` command.
 
 ## APIs
 
+### `UbuntuVersion`
+
 ```typescript
 interface UbuntuVersion {
     description: string;
@@ -60,6 +62,8 @@ properties are extracted value from `lsb_release` command output.
 - `description`: An OS description like `Ubuntu 18.04 LTS`
 - `release`: Version of Ubuntu like `18.04`
 - `codename`: Codename of Ubuntu like `bionic` for 18.04
+
+### `getUbuntuVersion`
 
 ```typescript
 function getUbuntuVersion(): Promise<UbuntuVersion | null>;
