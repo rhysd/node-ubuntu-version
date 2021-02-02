@@ -9,7 +9,7 @@ export interface UbuntuVersion {
 export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
     function command(cmd: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            exec(cmd, (error, stdout, stderr) => {
+            exec(cmd, { encoding: 'utf8' }, (error, stdout, stderr) => {
                 if (error) {
                     reject(new Error(`Could not execute ${cmd}: ${error} (stderr=${stderr})`));
                     return;
