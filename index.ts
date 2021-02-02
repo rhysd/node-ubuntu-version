@@ -1,1 +1,3 @@
-export function getUbuntuVersion() {}
+export function getUbuntuVersion(): void {
+    throw new Error('TODO');
+}
