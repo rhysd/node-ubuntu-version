@@ -35,14 +35,14 @@ describe('getUbuntuVersion()', function () {
     }
 
     const osName = process.env.TEST_CI_OS_NAME;
-    if (osName && osName.startsWith('ubuntu-')) {
+    if (osName?.startsWith('ubuntu-')) {
         it(`returns proper version info for '${osName}' on CI`, async function () {
-            const [ver, code] = (() => {
+            const [ver, code] = ((): [string, string] => {
                 const ver = osName.slice('ubuntu-'.length);
                 switch (ver) {
                     case 'latest':
                     case '20.04':
-                        return ['20.04', 'forcal'];
+                        return ['20.04', 'focal'];
                     case '18.04':
                         return ['18.04', 'bionic'];
                     case '16.04':
