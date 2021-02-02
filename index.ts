@@ -34,15 +34,15 @@ export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
     for (const line of stdout.split('\n')) {
         const m = line.match(reDistributor);
         if (m !== null) {
-            const distributor = m[0];
+            const distributor = m[1];
             if (distributor !== 'Ubuntu') {
                 return null;
             }
         }
 
-        description = line.match(reDescription)?.[0];
-        release = line.match(reRelease)?.[0];
-        codename = line.match(reCodename)?.[0];
+        description = line.match(reDescription)?.[1];
+        release = line.match(reRelease)?.[1];
+        codename = line.match(reCodename)?.[1];
     }
 
     if (!description || !release || !codename) {
