@@ -1,0 +1,43 @@
+{
+  "name": "ubuntu-version",
+  "version": "0.0.0",
+  "description": "Get Ubuntu version from current system",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "watch:tsc": "tsc -p . --watch --preserveWatchOutput",
+    "watch:mocha": "mocha --watch-files './test/*.js'",
+    "watch": "npm-run-all -p watch:tsc watch:mocha",
+    "lint": "eslint --max-warnings 0 ./**/*.ts",
+    "fix": "eslint --fix './**/*.ts'",
+    "mocha": "mocha ./test",
+    "test": "npm-run-all build mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhysd/node-ubuntu-version.git"
+  },
+  "keywords": [
+    "ubuntu",
+    "linux",
+    "version"
+  ],
+  "author": "rhysd <lin90162@yahoo.co.jp> (https://rhysd.github.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rhysd/node-ubuntu-version/issues"
+  },
+  "homepage": "https://github.com/rhysd/node-ubuntu-version#readme",
+  "devDependencies": {
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.22",
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-mocha": "^8.0.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "mocha": "^8.2.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.3"
+  }
+}
