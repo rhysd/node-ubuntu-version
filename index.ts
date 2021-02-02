@@ -40,9 +40,18 @@ export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
             }
         }
 
-        description = line.match(reDescription)?.[1];
-        release = line.match(reRelease)?.[1];
-        codename = line.match(reCodename)?.[1];
+        const desc = line.match(reDescription)?.[1];
+        if (desc) {
+            description = desc;
+        }
+        const rel = line.match(reRelease)?.[1];
+        if (rel) {
+            release = rel;
+        }
+        const code = line.match(reCodename)?.[1];
+        if (code) {
+            codename = code;
+        }
     }
 
     if (!description || !release || !codename) {
