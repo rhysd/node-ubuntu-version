@@ -1,5 +1,6 @@
 ubuntu-version
 ==============
+[![npm][npm-badge]][npm]
 [![CI][ci-badge]][ci]
 
 [ubuntu-version][npm] is a tiny Node.js package to get Ubuntu version information.
@@ -79,6 +80,7 @@ Otherwise the returned promise will be resolved as an object which meets `Ubuntu
 Distributed under [the MIT license](./LICENSE.txt).
 
 [npm]: https://www.npmjs.com/package/ubuntu-version
+[npm-badge]: https://badge.fury.io/js/ubuntu-version.svg
 [ci-badge]: https://github.com/rhysd/node-ubuntu-version/workflows/CI/badge.svg?branch=master&event=push
 [ci]: https://github.com/rhysd/node-ubuntu-version/actions?query=workflow%3ACI
 [ts]: https://www.typescriptlang.org/
