@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "description": "Get Ubuntu version from current system",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "index.ts",
+    "LICENSE.txt"
+  ],
   "scripts": {
     "build": "tsc -p .",
     "watch:tsc": "tsc -p . --watch --preserveWatchOutput",
@@ -11,7 +16,8 @@
     "lint": "eslint --max-warnings 0 ./**/*.ts",
     "fix": "eslint --fix './**/*.ts'",
     "mocha": "mocha ./test",
-    "test": "npm-run-all build mocha"
+    "test": "npm-run-all build mocha",
+    "prepublishOnly": "npm-run-all -p build lint test"
   },
   "repository": {
     "type": "git",
