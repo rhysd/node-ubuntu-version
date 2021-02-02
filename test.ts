@@ -33,4 +33,31 @@ describe('getUbuntuVersion()', function () {
             A.equal(ret, null);
         });
     }
+
+    const osName = process.env.TEST_CI_OS_NAME;
+    if (osName && osName.startsWith('ubuntu-')) {
+        it(`returns proper version info for '${osName}' on CI`, async function () {
+            const [ver, code] = (() => {
+                const ver = osName.slice('ubuntu-'.length);
+                switch (ver) {
+                    case 'latest':
+                    case '20.04':
+                        return ['20.04', 'forcal'];
+                    case '18.04':
+                        return ['18.04', 'bionic'];
+                    case '16.04':
+                        return ['16.04', 'xenial'];
+                    default:
+                        throw new Error(`Unexpected OS: ${osName}`);
+                }
+            })();
+
+            const ret = await getUbuntuVersion();
+            A.ok(ret);
+            const { description, release, codename } = ret;
+            A.ok(description.includes(ver), description);
+            A.equal(release, ver);
+            A.equal(codename, code);
+        });
+    }
 });

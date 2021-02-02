@@ -22,6 +22,8 @@ jobs:
     steps:
       - run: lsb_release -a
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
+      - run: echo "TEST_CI_OS_NAME=${{matrix.os}}" >> $GITHUB_ENV
+        if: ${{ startsWith(matrix.os, 'ubuntu-') }}
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
