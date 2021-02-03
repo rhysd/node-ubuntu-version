@@ -71,11 +71,12 @@ function getUbuntuVersion(): Promise<UbuntuVersion | null>;
 
 `getUbuntuVersion` is a function to get Ubuntu version information.
 
-When this function is called on OSes other than Linux or when `lsb_release` command shows that it is
-not Ubuntu, the returned `Promise` value will be resolved as `null`.
+When this function is called on OSes other than Linux, when `lsb_release` command shows that it is
+not Ubuntu or when `lsb_release` command is not found, the returned `Promise` value will be resolved
+as `null`.
 
-When running `lsb_release` command failed with non-zero exit status, the returned promise will be
-rejected with an `Error` object which describes how the command failed.
+When running `lsb_release` command failed with non-zero exit status, the returned `Promise` value
+will be rejected with an `Error` object which describes how the command failed.
 
 Otherwise the returned promise will be resolved as an object which meets `UbuntuVersion` interface.
 

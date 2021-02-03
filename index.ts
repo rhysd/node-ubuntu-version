@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 
 export interface UbuntuVersion {
     description: string;
@@ -7,11 +7,19 @@ export interface UbuntuVersion {
 }
 
 export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
-    function command(cmd: string): Promise<string> {
+    function isSystemError(e: Error): e is NodeJS.ErrnoException {
+        return 'errno' in e;
+    }
+
+    function command(exe: string, args: string[]): Promise<string | null> {
         return new Promise((resolve, reject) => {
-            exec(cmd, { encoding: 'utf8' }, (error, stdout, stderr) => {
+            execFile(exe, args, { encoding: 'utf8', shell: false }, (error, stdout, stderr) => {
                 if (error) {
-                    reject(new Error(`Could not execute ${cmd}: ${error} (stderr=${stderr})`));
+                    if (isSystemError(error) && error.code === 'ENOENT') {
+                        resolve(null); // When lsb_release is not found
+                        return;
+                    }
+                    reject(new Error(`Could not execute \`${exe} ${args.join(' ')}\`: ${error} (stderr=${stderr})`));
                     return;
                 }
                 resolve(stdout);
@@ -23,7 +31,11 @@ export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
         return null;
     }
 
-    const stdout = await command('lsb_release -a');
+    const stdout = await command('lsb_release', ['-a']);
+    if (stdout === null) {
+        return null;
+    }
+
     const reDistributor = /^Distributor ID:\s*(.+)$/;
     const reDescription = /^Description:\s*(.+)$/;
     const reRelease = /^Release:\s*(.+)$/;
