@@ -6,27 +6,27 @@ export interface UbuntuVersion {
     codename: string;
 }
 
-export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
-    function isSystemError(e: Error): e is NodeJS.ErrnoException {
-        return 'errno' in e;
-    }
+function isSystemError(e: Error): e is NodeJS.ErrnoException {
+    return 'errno' in e;
+}
 
-    function command(exe: string, args: string[]): Promise<string | null> {
-        return new Promise((resolve, reject) => {
-            execFile(exe, args, { encoding: 'utf8', shell: false }, (error, stdout, stderr) => {
-                if (error) {
-                    if (isSystemError(error) && error.code === 'ENOENT') {
-                        resolve(null); // When lsb_release is not found
-                        return;
-                    }
-                    reject(new Error(`Could not execute \`${exe} ${args.join(' ')}\`: ${error} (stderr=${stderr})`));
+function command(exe: string, args: string[]): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+        execFile(exe, args, { encoding: 'utf8', shell: false }, (error, stdout, stderr) => {
+            if (error) {
+                if (isSystemError(error) && error.code === 'ENOENT') {
+                    resolve(null); // When lsb_release is not found
                     return;
                 }
-                resolve(stdout);
-            });
+                reject(new Error(`Could not execute \`${exe} ${args.join(' ')}\`: ${error} (stderr=${stderr})`));
+                return;
+            }
+            resolve(stdout);
         });
-    }
+    });
+}
 
+export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
     if (process.platform !== 'linux') {
         return null;
     }
