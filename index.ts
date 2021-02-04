@@ -43,6 +43,7 @@ export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
     let description = null;
     let release = null;
     let codename = null;
+    let distributorFound = false;
     for (const line of stdout.split('\n')) {
         const m = line.match(reDistributor);
         if (m !== null) {
@@ -50,6 +51,7 @@ export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
             if (distributor !== 'Ubuntu') {
                 return null;
             }
+            distributorFound = true;
         }
 
         const desc = line.match(reDescription)?.[1];
@@ -66,7 +68,7 @@ export async function getUbuntuVersion(): Promise<UbuntuVersion | null> {
         }
     }
 
-    if (description === null || release === null || codename === null) {
+    if (!distributorFound || description === null || release === null || codename === null) {
         return null;
     }
 
