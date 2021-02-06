@@ -42,7 +42,7 @@ describe('getUbuntuVersion()', function () {
     const osName = process.env.TEST_CI_OS_NAME;
     if (osName?.startsWith('ubuntu-')) {
         it(`returns proper version info for '${osName}' on CI`, async function () {
-            const [ver, code] = ((): [string, string] => {
+            const [rel, code] = ((): [string, string] => {
                 const ver = osName.slice('ubuntu-'.length);
                 switch (ver) {
                     case 'latest':
@@ -61,18 +61,21 @@ describe('getUbuntuVersion()', function () {
             A.ok(ret);
 
             const { description, release, codename } = ret;
-            A.ok(description.includes(ver), description);
-            A.equal(release, ver);
+            A.ok(description.includes(rel), description);
+            A.equal(release, rel);
             A.equal(codename, code);
 
-            const verArr = ret.version;
-            A.ok(verArr.length >= 2);
-            const [major, minor, patch] = verArr;
-            let version = `${major}.${minor.toString().padStart(2, '0')}`;
-            if (patch) {
-                version = `${version}.${patch}`;
+            // Check version prop
+            {
+                const got = ret.version;
+                const want = rel.split('.').map(s => parseInt(s, 10));
+                A.equal(want[0], got[0]);
+                A.equal(want[1], got[1]);
+                A.ok(description.includes(got[0].toString()));
+                A.ok(description.includes(got[1].toString()));
+                A.ok(release.includes(got[0].toString()));
+                A.ok(release.includes(got[1].toString()));
             }
-            A.ok(version.startsWith(ver), `wanted ${ver} in ${version}`);
         });
     }
 });
