@@ -119,6 +119,19 @@ describe('getUbuntuVersion()', function () {
                 },
             );
         });
+
+        it('returns empty array as "version" property when no version is detected', async function () {
+            const output = [
+                'Distributor ID:	Ubuntu',
+                'Description:	Ubuntu a.b.c LTS',
+                'Release:	a.b',
+                'Codename:	...',
+            ].join('\n');
+            const mocked = new ExecFileMock(output);
+            const ret = await mocked.getUbuntuVersion();
+            A.ok(ret);
+            A.deepEqual(ret.version, []);
+        });
     });
 
     context('on non-Linux OSes', function () {
