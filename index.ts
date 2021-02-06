@@ -11,7 +11,7 @@ class LsbReleaseOutput implements UbuntuVersion {
     constructor(public description: string, public release: string, public codename: string) {}
 
     get version(): number[] {
-        const re = /(\d+)\.(\d+)(?:\.(\d+))/;
+        const re = /(\d+)\.(\d+)(?:\.(\d+))?/;
         for (const s of [this.description, this.release]) {
             const m = s.match(re);
             if (m !== null) {

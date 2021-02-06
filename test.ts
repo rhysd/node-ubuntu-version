@@ -132,6 +132,20 @@ describe('getUbuntuVersion()', function () {
             A.ok(ret);
             A.deepEqual(ret.version, []);
         });
+
+        it('gets version from release when description is useless', async function () {
+            const output = [
+                'No LSB modules are available.',
+                'Distributor ID:	Ubuntu',
+                'Description:	Ubuntu ... LTS',
+                'Release:	20.04',
+                'Codename:	focal',
+            ].join('\n');
+            const mocked = new ExecFileMock(output);
+            const ret = await mocked.getUbuntuVersion();
+            A.ok(ret);
+            A.deepEqual(ret.version, [20, 4]);
+        });
     });
 
     context('on non-Linux OSes', function () {
