@@ -55,10 +55,16 @@ describe('getUbuntuVersion()', function () {
 
             const ret = await getUbuntuVersion();
             A.ok(ret);
+
             const { description, release, codename } = ret;
             A.ok(description.includes(ver), description);
             A.equal(release, ver);
             A.equal(codename, code);
+
+            const verArr = ret.version;
+            A.ok(verArr.length > 0);
+            const version = verArr.join('.');
+            A.ok(version.startsWith(ver), `wanted ${ver} in ${version}`);
         });
     }
 });
