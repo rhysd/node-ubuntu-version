@@ -21,13 +21,13 @@ describe('getUbuntuVersion()', function () {
             A.ok(description, msg);
             A.ok(release, msg);
             A.ok(codename, msg);
-            A.ok(version.length > 0, msg);
+            A.ok(version.length >= 2, msg);
 
             A.ok(description.includes('Ubuntu'), msg); // e.g. "Ubuntu 18.04 LTS"
             A.ok(/^\d+\.\d+$/.test(release), msg); // e.g. "18.04"
             A.ok(description.includes(release), msg);
             A.ok(/^[a-zA-Z]+$/.test(codename), msg); // e.g. "bionic"
-            const verString = `${version[0]}.${version[1]}`;
+            const verString = `${version[0]}.${version[1].toString().padStart(2, '0')}`;
             A.ok(description.includes(verString));
             A.ok(release.startsWith(verString));
         });
@@ -66,8 +66,12 @@ describe('getUbuntuVersion()', function () {
             A.equal(codename, code);
 
             const verArr = ret.version;
-            A.ok(verArr.length > 0);
-            const version = verArr.join('.');
+            A.ok(verArr.length >= 2);
+            const [major, minor, patch] = verArr;
+            let version = `${major}.${minor.toString().padStart(2, '0')}`;
+            if (patch) {
+                version = `${version}.${patch}`;
+            }
             A.ok(version.startsWith(ver), `wanted ${ver} in ${version}`);
         });
     }
