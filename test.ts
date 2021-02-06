@@ -31,12 +31,27 @@ describe('getUbuntuVersion()', function () {
             A.ok(description.includes(verString));
             A.ok(release.startsWith(verString));
         });
-    } else {
-        it('should return null for OSes other than Ubuntu', async function () {
-            const ret = await getUbuntuVersion();
-            A.equal(ret, null);
-        });
     }
+
+    context('on OS other than Ubuntu', function () {
+        let saved: string;
+
+        before(function () {
+            saved = process.platform;
+        });
+
+        after(function () {
+            Object.defineProperty(process, 'platform', { value: saved });
+        });
+
+        for (const platform of ['darwin', 'windows']) {
+            it(`returns null on ${platform}`, async function () {
+                Object.defineProperty(process, 'platform', { value: platform });
+                const ret = await getUbuntuVersion();
+                A.equal(ret, null);
+            });
+        }
+    });
 
     // More tests on CI for integration between system and this library
     const osName = process.env.TEST_CI_OS_NAME;
