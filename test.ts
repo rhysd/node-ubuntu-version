@@ -9,7 +9,7 @@ class ExecFileMock {
     constructor(public output: string | Error) {
         this.called = null;
 
-        const execFile = (...args: any[]) => {
+        const execFile = (...args: any[]): void => {
             this.called = args;
             const cb = args[args.length - 1];
             if (typeof this.output === 'string') {
@@ -22,7 +22,7 @@ class ExecFileMock {
         this.getUbuntuVersion = mock.reRequire('.').getUbuntuVersion;
     }
 
-    static finalize() {
+    static finalize(): void {
         mock.stop('child_process');
     }
 }
