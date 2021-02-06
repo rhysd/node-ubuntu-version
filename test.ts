@@ -14,18 +14,22 @@ describe('getUbuntuVersion()', function () {
     if (isUbuntu()) {
         it('should return Ubuntu version info for Ubuntu', async function () {
             const ret = await getUbuntuVersion();
-            const msg = JSON.stringify(ret);
             A.ok(ret);
 
-            const { description, release, codename } = ret;
+            const { description, release, codename, version } = ret;
+            const msg = JSON.stringify({ description, release, codename, version });
             A.ok(description, msg);
             A.ok(release, msg);
             A.ok(codename, msg);
+            A.ok(version.length > 0, msg);
 
             A.ok(description.includes('Ubuntu'), msg); // e.g. "Ubuntu 18.04 LTS"
             A.ok(/^\d+\.\d+$/.test(release), msg); // e.g. "18.04"
             A.ok(description.includes(release), msg);
             A.ok(/^[a-zA-Z]+$/.test(codename), msg); // e.g. "bionic"
+            const verString = `${version[0]}.${version[1]}`;
+            A.ok(description.includes(verString));
+            A.ok(release.startsWith(verString));
         });
     } else {
         it('should return null for OSes other than Ubuntu', async function () {
