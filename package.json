@@ -17,6 +17,7 @@
     "fix": "eslint --fix './**/*.ts'",
     "mocha": "mocha ./test",
     "test": "npm-run-all build mocha",
+    "nyc": "nyc npm test",
     "cov": "nyc --reporter=lcov --reporter=text-summary npm test && open ./coverage/lcov-report/index.html",
     "prepublishOnly": "npm-run-all -p build lint test"
   },

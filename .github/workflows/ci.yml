@@ -30,4 +30,8 @@ jobs:
           node-version: '14'
       - run: npm ci
       - run: npm run build
-      - run: npm test
+      - run: npm run nyc
+      - name: Generate coverage report
+        run: ./node_modules/.bin/nyc report --reporter=text-lcov > coverage.lcov
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v1

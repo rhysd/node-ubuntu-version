@@ -2,6 +2,7 @@ ubuntu-version
 ==============
 [![npm][npm-badge]][npm]
 [![CI][ci-badge]][ci]
+[![codecov badge][]][codecov]
 
 [ubuntu-version][npm] is a tiny Node.js package to get Ubuntu version information.
 
@@ -91,6 +92,8 @@ Distributed under [the MIT license](./LICENSE.txt).
 [npm-badge]: https://badge.fury.io/js/ubuntu-version.svg
 [ci-badge]: https://github.com/rhysd/node-ubuntu-version/workflows/CI/badge.svg?branch=master&event=push
 [ci]: https://github.com/rhysd/node-ubuntu-version/actions?query=workflow%3ACI
+[codecov badge]: https://codecov.io/gh/rhysd/node-ubuntu-version/branch/master/graph/badge.svg
+[codecov]: https://codecov.io/gh/rhysd/node-ubuntu-version
 [ts]: https://www.typescriptlang.org/
 [os-release]: https://nodejs.org/api/os.html#os_os_release
 [ga]: https://github.com/features/actions
