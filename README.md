@@ -23,9 +23,10 @@ const { getUbuntuVersion } = require('ubuntu-version');
         throw new Error('This OS is not Ubuntu');
     }
 
-    console.log(ubuntu.description); // e.g. "Ubuntu 18.04 LTS"
+    console.log(ubuntu.description); // e.g. "Ubuntu 18.04.2 LTS"
     console.log(ubuntu.release); // e.g. "18.04"
     console.log(ubuntu.codename); // e.g. "bionic"
+    console.log(ubuntu.version); // e.g. [18, 4, 2]
 })().catch(console.error);
 ```
 
@@ -53,6 +54,7 @@ interface UbuntuVersion {
     description: string;
     release: string;
     codename: string;
+    version: number[];
 }
 ```
 
@@ -62,6 +64,7 @@ properties are extracted value from `lsb_release` command output.
 - `description`: An OS description like `Ubuntu 18.04 LTS`
 - `release`: Version of Ubuntu like `18.04`
 - `codename`: Codename of Ubuntu like `bionic` for 18.04
+- `version`: Major, minor, (possibly) patch versions as number array like `[16, 4, 1]` for v16.04.1. Empty when no version was found
 
 ### `getUbuntuVersion`
 
