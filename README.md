@@ -4,7 +4,7 @@ ubuntu-version
 [![CI][ci-badge]][ci]
 [![codecov badge][]][codecov]
 
-[ubuntu-version][npm] is a tiny Node.js package to get Ubuntu version information.
+[ubuntu-version][npm] is a tiny Node.js package to get Ubuntu version from system.
 
 ## Installation
 
@@ -18,16 +18,13 @@ npm install --save ubuntu-version
 const { getUbuntuVersion } = require('ubuntu-version');
 
 (async () => {
-    const ubuntu = await getUbuntuVersion();
+    const version = await getUbuntuVersion();
 
-    if (!ubuntu) {
+    if (version.length === 0) {
         throw new Error('This OS is not Ubuntu');
     }
 
-    console.log(ubuntu.description); // e.g. "Ubuntu 18.04.2 LTS"
-    console.log(ubuntu.release); // e.g. "18.04"
-    console.log(ubuntu.codename); // e.g. "bionic"
-    console.log(ubuntu.version); // e.g. [18, 4, 2]
+    console.log(version); // e.g. [18, 4, 2] for Ubuntu 18.04.2 LTS
 })().catch(console.error);
 ```
 
@@ -46,43 +43,24 @@ For example:
 
 Instead, we need to get OS information from `lsb_release` command.
 
-## APIs
-
-### `UbuntuVersion`
+## The API
 
 ```typescript
-interface UbuntuVersion {
-    description: string;
-    release: string;
-    codename: string;
-    version: number[];
-}
+function getUbuntuVersion(): Promise<number[]>;
 ```
 
-`UbuntuVersion` is an interface for an object which is returned from `getUbuntuVersion()`. Each
-properties are extracted value from `lsb_release` command output.
+`getUbuntuVersion` is a function to get Ubuntu version as an array of versions.
 
-- `description`: An OS description like `Ubuntu 18.04 LTS`
-- `release`: Version of Ubuntu like `18.04`
-- `codename`: Codename of Ubuntu like `bionic` for 18.04
-- `version`: Major, minor, (possibly) patch versions as number array like `[16, 4, 1]` for v16.04.1. Empty when no version was found
-
-### `getUbuntuVersion`
-
-```typescript
-function getUbuntuVersion(): Promise<UbuntuVersion | null>;
-```
-
-`getUbuntuVersion` is a function to get Ubuntu version information.
+Returned array has 2 or 3 elements. The first and second elements represetnt major and minor versions.
+When the third element exists, it represents patch version. For example, on `Ubuntu 16.04.1 LTS`,
+this function will return a promise resolved as `[16, 4, 1]`.
 
 When this function is called on OSes other than Linux, when `lsb_release` command shows that it is
 not Ubuntu or when `lsb_release` command is not found, the returned `Promise` value will be resolved
-as `null`.
+as `[]`.
 
 When running `lsb_release` command failed with non-zero exit status, the returned `Promise` value
 will be rejected with an `Error` object which describes how the command failed.
-
-Otherwise the returned promise will be resolved as an object which meets `UbuntuVersion` interface.
 
 ## License
 
