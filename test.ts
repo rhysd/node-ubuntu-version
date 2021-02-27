@@ -1,10 +1,10 @@
 import { strict as A } from 'assert';
 import mock = require('mock-require');
-import { getUbuntuVersion, UbuntuVersion } from '.';
+import { getUbuntuVersion } from '.';
 
 class ExecFileMock {
     called: any[] | null;
-    getUbuntuVersion: () => Promise<UbuntuVersion | null>;
+    getUbuntuVersion: () => Promise<number[]>;
 
     constructor(public output: string | Error) {
         this.called = null;
@@ -49,12 +49,8 @@ describe('getUbuntuVersion()', function () {
                 'Codename:	focal',
             ].join('\n');
             const mocked = new ExecFileMock(output);
-            const ret = await mocked.getUbuntuVersion();
-            A.ok(ret);
-            A.equal(ret.description, 'Ubuntu 20.04.2 LTS');
-            A.equal(ret.release, '20.04');
-            A.equal(ret.codename, 'focal');
-            A.deepEqual(ret.version, [20, 4, 2]);
+            const ver = await mocked.getUbuntuVersion();
+            A.deepEqual(ver, [20, 4, 2]);
             A.ok(mocked.called);
             A.equal(mocked.called[0], 'lsb_release');
         });
@@ -68,30 +64,26 @@ describe('getUbuntuVersion()', function () {
                 'Codename:	groovy',
             ].join('\n');
             const mocked = new ExecFileMock(output);
-            const ret = await mocked.getUbuntuVersion();
-            A.ok(ret);
-            A.equal(ret.description, 'Ubuntu 20.10.1');
-            A.equal(ret.release, '20.10');
-            A.equal(ret.codename, 'groovy');
-            A.deepEqual(ret.version, [20, 10, 1]);
+            const ver = await mocked.getUbuntuVersion();
+            A.deepEqual(ver, [20, 10, 1]);
         });
 
-        it('returns null with no distributor ID', async function () {
+        it('returns empty array with no distributor ID', async function () {
             const output = ['No LSB modules are available.'].join('\n');
             const mocked = new ExecFileMock(output);
-            const ret = await mocked.getUbuntuVersion();
-            A.equal(ret, null);
+            const ver = await mocked.getUbuntuVersion();
+            A.deepEqual(ver, []);
         });
 
-        it('returns null when lsb_release is not found', async function () {
+        it('returns empty array when lsb_release is not found', async function () {
             // Pseudo SystemError since no constructor is public for the class
             const err = Object.assign(new Error(''), { errno: -2, code: 'ENOENT' });
             const mocked = new ExecFileMock(err);
-            const ret = await mocked.getUbuntuVersion();
-            A.equal(ret, null);
+            const ver = await mocked.getUbuntuVersion();
+            A.deepEqual(ver, []);
         });
 
-        it('returns null on Linux other than Ubuntu', async function () {
+        it('returns empty array on Linux other than Ubuntu', async function () {
             const output = [
                 'LSB Version:	:base-4.0-ia32:base-4.0-noarch:core-4.0-ia32:core-4.0-noarch',
                 'Distributor ID:	CentOS',
@@ -100,8 +92,8 @@ describe('getUbuntuVersion()', function () {
                 'Codename:	Final',
             ].join('\n');
             const mocked = new ExecFileMock(output);
-            const ret = await mocked.getUbuntuVersion();
-            A.equal(ret, null);
+            const ver = await mocked.getUbuntuVersion();
+            A.deepEqual(ver, []);
         });
 
         it('throws an error when lsb_release command fails', async function () {
@@ -120,7 +112,7 @@ describe('getUbuntuVersion()', function () {
             );
         });
 
-        it('returns empty array as "version" property when no version is detected', async function () {
+        it('returns empty array when no version is detected', async function () {
             const output = [
                 'Distributor ID:	Ubuntu',
                 'Description:	Ubuntu a.b.c LTS',
@@ -128,9 +120,8 @@ describe('getUbuntuVersion()', function () {
                 'Codename:	...',
             ].join('\n');
             const mocked = new ExecFileMock(output);
-            const ret = await mocked.getUbuntuVersion();
-            A.ok(ret);
-            A.deepEqual(ret.version, []);
+            const ver = await mocked.getUbuntuVersion();
+            A.deepEqual(ver, []);
         });
 
         it('gets version from release when description is useless', async function () {
@@ -142,9 +133,8 @@ describe('getUbuntuVersion()', function () {
                 'Codename:	focal',
             ].join('\n');
             const mocked = new ExecFileMock(output);
-            const ret = await mocked.getUbuntuVersion();
-            A.ok(ret);
-            A.deepEqual(ret.version, [20, 4]);
+            const ver = await mocked.getUbuntuVersion();
+            A.deepEqual(ver, [20, 4]);
         });
     });
 
@@ -154,10 +144,10 @@ describe('getUbuntuVersion()', function () {
         });
 
         for (const platform of ['darwin', 'windows']) {
-            it(`returns null on ${platform}`, async function () {
+            it(`returns empty array on ${platform}`, async function () {
                 Object.defineProperty(process, 'platform', { value: platform });
-                const ret = await getUbuntuVersion();
-                A.equal(ret, null);
+                const ver = await getUbuntuVersion();
+                A.deepEqual(ver, []);
             });
         }
     });
@@ -166,40 +156,25 @@ describe('getUbuntuVersion()', function () {
     const osName = process.env.TEST_CI_OS_NAME;
     if (osName?.startsWith('ubuntu-')) {
         it(`returns proper version info for '${osName}' on CI`, async function () {
-            const [rel, code] = ((): [string, string] => {
+            const [major, minor] = ((): [number, number] => {
                 const ver = osName.slice('ubuntu-'.length);
                 switch (ver) {
                     case 'latest':
                     case '20.04':
-                        return ['20.04', 'focal'];
+                        return [20, 4];
                     case '18.04':
-                        return ['18.04', 'bionic'];
+                        return [18, 4];
                     case '16.04':
-                        return ['16.04', 'xenial'];
+                        return [16, 4];
                     default:
                         throw new Error(`Unexpected OS: ${osName}`);
                 }
             })();
 
-            const ret = await getUbuntuVersion();
-            A.ok(ret);
-
-            const { description, release, codename } = ret;
-            A.ok(description.includes(rel), description);
-            A.equal(release, rel);
-            A.equal(codename, code);
-
-            // Check version prop
-            {
-                const got = ret.version;
-                const want = rel.split('.').map(s => parseInt(s, 10));
-                A.equal(want[0], got[0]);
-                A.equal(want[1], got[1]);
-                A.ok(description.includes(got[0].toString()));
-                A.ok(description.includes(got[1].toString()));
-                A.ok(release.includes(got[0].toString()));
-                A.ok(release.includes(got[1].toString()));
-            }
+            const ver = await getUbuntuVersion();
+            A.ok(ver.length >= 2);
+            A.equal(ver[0], major);
+            A.equal(ver[1], minor);
         });
     }
 });
