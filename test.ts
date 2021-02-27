@@ -153,7 +153,7 @@ describe('getUbuntuVersion()', function () {
     });
 
     // More tests on CI for integration between system and this library
-    const osName = process.env.TEST_CI_OS_NAME;
+    const osName = process.env['TEST_CI_OS_NAME'];
     if (osName?.startsWith('ubuntu-')) {
         it(`returns proper version info for '${osName}' on CI`, async function () {
             const [major, minor] = ((): [number, number] => {
